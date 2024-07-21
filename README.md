@@ -9,3 +9,6 @@ It provides an abstracted action class that enables programmatic execution of va
 - **Global Mute**: Mute global audio output.
 - **Console Command**: Executes specific console commands given optional parameters.
 - **Open File**: Opens a specified file for viewing or editing.
+
+## License
+This project is licensed under the [GPL 2.0 License](./LICENSE).
