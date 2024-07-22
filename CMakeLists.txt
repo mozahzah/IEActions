@@ -15,7 +15,7 @@ file(GLOB SOURCE_FILES "./*.cpp")
 list(APPEND SOURCE_FILES ${IMPL_CPP_FILES})
 add_library(IEActions STATIC ${SOURCE_FILES})
 target_include_directories(IEActions PUBLIC "./")
-target_link_libraries(IEActions PUBLIC IECore)
+target_link_libraries(IEActions PRIVATE IECore)
 
 if(APPLE)
     target_link_libraries(IEActions PUBLIC ${COREAUDIO_LIBRARY})
