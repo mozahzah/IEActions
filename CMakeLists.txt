@@ -1,6 +1,7 @@
 # Copyright © 2024 mozahzah (Incus Entertainment). All rights reserved.
 
 cmake_minimum_required(VERSION 3.29)
+project(IEActions VERSION 1.0.0 LANGUAGES CXX)
 
 message("\n------------------------------------------------------------")
 message("IEActions\n")
@@ -10,18 +11,41 @@ if(APPLE)
   find_library(COREAUDIO_LIBRARY CoreAudio)
 endif()
 
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 file(GLOB IMPL_CPP_FILES "./Implementation/*.cpp")
 file(GLOB SOURCE_FILES "./*.cpp")
 list(APPEND SOURCE_FILES ${IMPL_CPP_FILES})
-add_library(IEActions STATIC ${SOURCE_FILES})
-target_include_directories(IEActions PUBLIC "./")
-target_link_libraries(IEActions PUBLIC IECore)
+add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
+target_include_directories(${PROJECT_NAME} PUBLIC ".")
+
+if(TARGET IECore)
+  message("Target IECore is already defined.")
+else()
+  add_subdirectory(ThirdParty/IECore)
+endif()
+target_link_libraries(${PROJECT_NAME} PUBLIC IECore)
 
 if(APPLE)
-    target_link_libraries(IEActions PUBLIC ${COREAUDIO_LIBRARY})
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${COREAUDIO_LIBRARY})
 endif()
 
-set(IEACTIONS_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE STRING "")
-message("IEACTIONS_DIR is cached as ${IEACTIONS_DIR}")
+install(TARGETS ${PROJECT_NAME}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+
+get_target_property(DEPENDENCIES ${PROJECT_NAME} LINK_LIBRARIES)
+foreach(DEPENDENCY ${DEPENDENCIES})
+  if(TARGET ${DEPENDENCY})
+    message("Installing dependency: ${DEPENDENCY}")
+    install(TARGETS ${DEPENDENCY}
+        EXPORT "${PROJECT_NAME}Targets"
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+  endif()
+endforeach()
 
 message("------------------------------------------------------------\n")
