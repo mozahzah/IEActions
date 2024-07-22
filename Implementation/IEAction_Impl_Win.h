@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "IEAction.h"
+#include "IEActions.h"
 
 #if defined (_WIN32)
 #include <atlbase.h> 
