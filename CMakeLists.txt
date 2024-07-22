@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.29)
 
 message("\n------------------------------------------------------------")
-message("IECore\n")
+message("IEActions\n")
 
 if(APPLE)
   set(CMAKE_OSX_SYSROOT /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
