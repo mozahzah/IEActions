@@ -22,13 +22,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC ".")
 file(GLOB HEADER_FILES "./*.h")
 set_property(TARGET ${PROJECT_NAME} PROPERTY PUBLIC_HEADER ${HEADER_FILES})
 
-if(TARGET IECore)
-  message("Target IECore is already defined.")
-else()
-  add_subdirectory(ThirdParty/IECore)
-endif()
-target_link_libraries(${PROJECT_NAME} PUBLIC IECore)
-
 if(APPLE)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${COREAUDIO_LIBRARY})
 endif()
