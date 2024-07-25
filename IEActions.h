@@ -3,7 +3,9 @@
 
 #pragma once
 
-#include "IECore.h"
+#include <functional>
+#include <memory>
+#include <string>
 
 class IEAction_Volume
 {
