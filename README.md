@@ -1,4 +1,8 @@
-# <img src="Resources/IE-Brand-Kit/IE-Logo-No-Bg.png" alt="IE Logo" width="26"> IEActions
+<p align="center">
+<img src="Resources/IE-Brand-Kit/IE-Logo-NoBg.png" alt="IE Logo" width="256"> 
+</p>
+
+# IEActions
 
 **IEActions** is a open-source extension library designed for Windows and macOS applications.  
 It provides an abstracted action class that enables programmatic execution of various actions such as volume control, muting, console commands, and file opening. This library serves as a versatile interface for managing different computer actions in applications.
