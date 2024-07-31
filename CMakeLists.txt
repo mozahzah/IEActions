@@ -21,11 +21,6 @@ message("System name: ${CMAKE_SYSTEM_NAME}")
 message("System version: ${CMAKE_SYSTEM_VERSION}")
 message("System processor: ${CMAKE_SYSTEM_PROCESSOR}")
 
-if(APPLE)
-  set(CMAKE_OSX_SYSROOT /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
-  find_library(COREAUDIO_LIBRARY CoreAudio)
-endif()
-
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 file(GLOB IMPL_CPP_FILES "./Implementation/*.cpp")
 file(GLOB SOURCE_FILES "./*.cpp")
@@ -36,7 +31,9 @@ file(GLOB HEADER_FILES "./*.h")
 set_property(TARGET ${PROJECT_NAME} PROPERTY PUBLIC_HEADER ${HEADER_FILES})
 
 if(APPLE)
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${COREAUDIO_LIBRARY})
+  set(CMAKE_OSX_SYSROOT /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk)
+  find_library(COREAUDIO_LIBRARY CoreAudio)
+  target_link_libraries(${PROJECT_NAME} PUBLIC ${COREAUDIO_LIBRARY})
 endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES 
