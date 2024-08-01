@@ -3,6 +3,7 @@
 // Author: mozahzah
 
 #include "Implementation/IEAction_Impl_Win.h"
+#include "IEAction_Impl_Win.h"
 
 #if defined (_WIN32)
 IEAction_Volume_Impl_Win::IEAction_Volume_Impl_Win()
@@ -12,10 +13,10 @@ IEAction_Volume_Impl_Win::IEAction_Volume_Impl_Win()
 
 float IEAction_Volume_Impl_Win::GetVolume() const
 {
-    float Volume;
+    float Volume = -1.0f;
     if (m_AudioEndpointVolume)
     {
-        m_AudioEndpointVolume->GetMasterVolumeLevel(&Volume);
+        m_AudioEndpointVolume->GetMasterVolumeLevelScalar(&Volume);
     }
     return Volume;
 }
@@ -24,7 +25,7 @@ void IEAction_Volume_Impl_Win::SetVolume(float Volume)
 {
     if (m_AudioEndpointVolume)
     {
-        m_AudioEndpointVolume->SetMasterVolumeLevelScalar(Volume/127, nullptr);
+        m_AudioEndpointVolume->SetMasterVolumeLevelScalar(std::clamp(Volume, 0.0f, 1.0f), nullptr);
     }
 }
 
@@ -131,6 +132,20 @@ IAudioEndpointVolume* IEAction_Mute_Impl_Win::GetMainAudioEndpointVolume()
         }
     }
     return EndpointVolume;
+}
+
+void IEAction_ConsoleCommand_Impl_Win::ExecuteConsoleCommand(const std::string& ConsoleCommand, float CommandParameterValue)
+{
+    std::string FinalConsoleCommand = ConsoleCommand;
+
+    const size_t ValuePosition = FinalConsoleCommand.find("{V}");
+    if (ValuePosition != std::string::npos)
+    {
+        const std::string ValueStr = std::to_string(CommandParameterValue);
+        FinalConsoleCommand.replace(ValuePosition, 3, ValueStr);
+    }
+
+    system(FinalConsoleCommand.c_str());
 }
 
 void IEAction_OpenFile_Impl_Win::OpenFile(const std::string& FilePath)

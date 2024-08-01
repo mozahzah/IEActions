@@ -35,7 +35,7 @@ void IEAction_Volume_Impl_Apple::SetVolume(float Volume)
         kAudioObjectPropertyElementMain
     };
 
-    float FinalVolume = Volume / 127.0f;
+    float FinalVolume = std::clamp(Volume, 0.0f, 1.0f);
     AudioObjectSetPropertyData(m_AudioDeviceID, &PropertyAddress, 0, NULL, PropertySize, &FinalVolume);
 }
 
@@ -155,6 +155,20 @@ OSStatus IEAction_Mute_Impl_Apple::MuteChangeCallback(AudioObjectID ObjectID, ui
         Status = noErr;
     }
     return Status;
+}
+
+void IEAction_ConsoleCommand_Impl_Apple::ExecuteConsoleCommand(const std::string& ConsoleCommand, float CommandParameterValue)
+{
+    std::string FinalConsoleCommand = ConsoleCommand;
+
+    const size_t ValuePosition = FinalConsoleCommand.find("{V}");
+    if (ValuePosition != std::string::npos)
+    {
+        const std::string ValueStr = std::to_string(CommandParameterValue);
+        FinalConsoleCommand.replace(ValuePosition, 3, ValueStr);
+    }
+
+    system(FinalConsoleCommand.c_str());
 }
 
 void IEAction_OpenFile_Impl_Apple::OpenFile(const std::string& FilePath)

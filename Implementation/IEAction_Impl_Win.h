@@ -47,6 +47,12 @@ private:
     std::function<void(bool)> m_OnMuteChangeCallback;
 };
 
+class IEAction_ConsoleCommand_Impl_Win : public IEAction_ConsoleCommand
+{
+public:
+    void ExecuteConsoleCommand(const std::string& ConsoleCommand, float CommandParameterValue = 0.0f) override;
+};
+
 class IEAction_OpenFile_Impl_Win : public IEAction_OpenFile
 {
 public:

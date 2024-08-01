@@ -68,4 +68,6 @@ foreach(DEPENDENCY ${DEPENDENCIES})
   endif()
 endforeach()
 
+add_subdirectory(Examples)
+
 message("------------------------------------------------------------\n")

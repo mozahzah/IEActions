@@ -29,7 +29,11 @@ namespace IEAction
 
     std::unique_ptr<IEAction_ConsoleCommand> GetConsoleCommandAction()
     {
-        return std::make_unique<IEAction_ConsoleCommand>();
+#if defined (_WIN32)
+        return std::make_unique<IEAction_ConsoleCommand_Impl_Win>();
+#elif defined (__APPLE__)
+        return std::make_unique<IEAction_ConsoleCommand_Impl_Apple>();
+#endif
     }
 
     std::unique_ptr<IEAction_OpenFile> GetOpenFileAction()
@@ -40,18 +44,4 @@ namespace IEAction
         return std::make_unique<IEAction_OpenFile_Impl_Apple>();
 #endif
     }
-}
-
-void IEAction_ConsoleCommand::ExecuteConsoleCommand(const std::string& ConsoleCommand, float CommandParameterValue)
-{
-    std::string FinalConsoleCommand = ConsoleCommand;
-
-    const size_t ValuePosition = FinalConsoleCommand.find("{V}");
-    if (ValuePosition != std::string::npos)
-    {
-        const std::string ValueStr = std::to_string(CommandParameterValue);
-        FinalConsoleCommand.replace(ValuePosition, 3, ValueStr);
-    }
-
-    system(FinalConsoleCommand.c_str());
 }
