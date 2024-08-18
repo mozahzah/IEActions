@@ -6,7 +6,9 @@
 
 #include <algorithm>
 #include <functional>
+#include <map>
 #include <memory>
+#include <random>
 #include <string>
 
 class IEAction_Volume
@@ -15,7 +17,13 @@ public:
     virtual ~IEAction_Volume() = default;
     virtual float GetVolume() const = 0;
     virtual void SetVolume(float Volume) = 0;
-    virtual void RegisterVolumeChangeCallback(const std::function<void(float)>&Callback) = 0;
+
+public:
+    [[nodiscard]] uint32_t RegisterVolumeChangeCallback(const std::function<void(float, void*)>& Callback, void* UserData);
+    void UnregisterVolumeChangeCallback(uint32_t CallbackID);
+
+protected:
+    std::map<uint32_t, std::pair<std::function<void(float, void*)>, void*>> m_VolumeChangeCallbacks;
 };
 
 class IEAction_Mute
@@ -24,7 +32,13 @@ public:
     virtual ~IEAction_Mute() = default;
     virtual bool GetMute() const = 0;
     virtual void SetMute(bool bMute) = 0;
-    virtual void RegisterMuteChangeCallback(const std::function<void(bool)>& Callback) = 0;
+
+public:
+    [[nodiscard]] uint32_t RegisterMuteChangeCallback(const std::function<void(bool, void*)>& Callback, void* UserData);
+    void UnregisterMuteChangeCallback(uint32_t CallbackID);
+
+protected:
+    std::map<uint32_t, std::pair<std::function<void(bool, void*)>, void*>> m_MuteChangeCallbacks;
 };
 
 class IEAction_ConsoleCommand

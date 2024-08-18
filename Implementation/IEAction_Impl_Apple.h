@@ -18,7 +18,6 @@ public:
 public:
     float GetVolume() const override;
     void SetVolume(float Volume) override;
-    void RegisterVolumeChangeCallback(const std::function<void(float)>& Callback) override;
 
 private:
     AudioDeviceID GetAudioDeviceID();
@@ -26,7 +25,6 @@ private:
 
 private:
     AudioDeviceID m_AudioDeviceID;
-    std::function<void(float)> m_OnVolumeChangeCallback;
 };
 
 class IEAction_Mute_Impl_Apple : public IEAction_Mute
@@ -37,7 +35,6 @@ public:
 public:
     bool GetMute() const override;
     void SetMute(bool bMute) override;
-    void RegisterMuteChangeCallback(const std::function<void(bool)>& Callback) override;
    
 private:
     AudioDeviceID GetAudioDeviceID();
@@ -45,7 +42,6 @@ private:
 
 private:
     AudioDeviceID m_AudioDeviceID;
-    std::function<void(float)> m_OnMuteChangeCallback;
 };
 
 class IEAction_ConsoleCommand_Impl_Apple : public IEAction_ConsoleCommand

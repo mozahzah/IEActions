@@ -8,6 +8,14 @@
 IEAction_Volume_Impl_Apple::IEAction_Volume_Impl_Apple()
 {
     m_AudioDeviceID = GetAudioDeviceID();
+
+    const AudioObjectPropertyAddress PropertyAddress =
+    {
+        kAudioHardwareServiceDeviceProperty_VirtualMainVolume,
+        kAudioDevicePropertyScopeOutput,
+        kAudioObjectPropertyElementMain
+    };
+    AudioObjectAddPropertyListener(m_AudioDeviceID, &PropertyAddress, &IEAction_Volume_Impl_Apple::VolumeChangeCallback, this);
 }
 
 float IEAction_Volume_Impl_Apple::GetVolume() const
@@ -39,19 +47,6 @@ void IEAction_Volume_Impl_Apple::SetVolume(float Volume)
     AudioObjectSetPropertyData(m_AudioDeviceID, &PropertyAddress, 0, NULL, PropertySize, &FinalVolume);
 }
 
-void IEAction_Volume_Impl_Apple::RegisterVolumeChangeCallback(const std::function<void(float)>& Callback)
-{
-    const AudioObjectPropertyAddress PropertyAddress =
-    {
-        kAudioHardwareServiceDeviceProperty_VirtualMainVolume,
-        kAudioDevicePropertyScopeOutput,
-        kAudioObjectPropertyElementMain
-    };
-    
-    AudioObjectAddPropertyListener(m_AudioDeviceID, &PropertyAddress, &IEAction_Volume_Impl_Apple::VolumeChangeCallback, this);
-    m_OnVolumeChangeCallback = Callback;
-}
-
 AudioDeviceID IEAction_Volume_Impl_Apple::GetAudioDeviceID()
 {
     AudioDeviceID OutputDeviceID;
@@ -72,9 +67,9 @@ OSStatus IEAction_Volume_Impl_Apple::VolumeChangeCallback(AudioObjectID ObjectID
     OSStatus Status;
     if (IEAction_Volume_Impl_Apple* const AppleVolumeAction = static_cast<IEAction_Volume_Impl_Apple*>(UserData))
     {
-        if (AppleVolumeAction->m_OnVolumeChangeCallback)
+        for (const std::pair<uint32_t, std::pair<std::function<void(float, void*)>, void*>>& Element : AppleVolumeAction->m_VolumeChangeCallbacks)
         {
-            AppleVolumeAction->m_OnVolumeChangeCallback(AppleVolumeAction->GetVolume());
+            Element.second.first(AppleVolumeAction->GetVolume(), Element.second.second);
         }
         Status = noErr;
     }
@@ -84,6 +79,14 @@ OSStatus IEAction_Volume_Impl_Apple::VolumeChangeCallback(AudioObjectID ObjectID
 IEAction_Mute_Impl_Apple::IEAction_Mute_Impl_Apple()
 {
     m_AudioDeviceID = GetAudioDeviceID();
+
+    const AudioObjectPropertyAddress PropertyAddress =
+    {
+        kAudioDevicePropertyMute,
+        kAudioDevicePropertyScopeOutput,
+        kAudioObjectPropertyElementMain
+    };
+    AudioObjectAddPropertyListener(m_AudioDeviceID, &PropertyAddress, &IEAction_Mute_Impl_Apple::MuteChangeCallback, this);
 }
 
 bool IEAction_Mute_Impl_Apple::GetMute() const
@@ -115,19 +118,6 @@ void IEAction_Mute_Impl_Apple::SetMute(bool bMute)
     AudioObjectSetPropertyData(m_AudioDeviceID, &PropertyAddress, 0, NULL, PropertySize, &Mute);
 }
 
-void IEAction_Mute_Impl_Apple::RegisterMuteChangeCallback(const std::function<void(bool)>& Callback)
-{
-    const AudioObjectPropertyAddress PropertyAddress =
-    {
-        kAudioDevicePropertyMute,
-        kAudioDevicePropertyScopeOutput,
-        kAudioObjectPropertyElementMain
-    };
-    
-    AudioObjectAddPropertyListener(m_AudioDeviceID, &PropertyAddress, &IEAction_Mute_Impl_Apple::MuteChangeCallback, this);
-    m_OnMuteChangeCallback = Callback;
-}
-
 AudioDeviceID IEAction_Mute_Impl_Apple::GetAudioDeviceID()
 {
     AudioDeviceID OutputDeviceID;
@@ -148,9 +138,9 @@ OSStatus IEAction_Mute_Impl_Apple::MuteChangeCallback(AudioObjectID ObjectID, ui
     OSStatus Status;
     if (IEAction_Mute_Impl_Apple* const AppleMuteAction = static_cast<IEAction_Mute_Impl_Apple*>(UserData))
     {
-        if (AppleMuteAction->m_OnMuteChangeCallback)
+        for (const std::pair<uint32_t, std::pair<std::function<void(bool, void*)>, void*>>& Element : AppleMuteAction->m_MuteChangeCallbacks)
         {
-            AppleMuteAction->m_OnMuteChangeCallback(AppleMuteAction->GetMute());
+            Element.second.first(AppleMuteAction->GetMute(), Element.second.second);
         }
         Status = noErr;
     }

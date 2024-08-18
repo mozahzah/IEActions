@@ -45,3 +45,27 @@ namespace IEAction
 #endif
     }
 }
+
+uint32_t IEAction_Volume::RegisterVolumeChangeCallback(const std::function<void(float, void*)>& Callback, void* UserData)
+{
+    const uint32_t CallbackID = std::rand();
+    m_VolumeChangeCallbacks.emplace(CallbackID, std::make_pair(Callback, UserData));
+    return CallbackID;
+}
+
+void IEAction_Volume::UnregisterVolumeChangeCallback(uint32_t CallbackID)
+{
+    m_VolumeChangeCallbacks.erase(CallbackID);
+}
+
+uint32_t IEAction_Mute::RegisterMuteChangeCallback(const std::function<void(bool, void*)>& Callback, void* UserData)
+{
+    const uint32_t CallbackID = std::rand();
+    m_MuteChangeCallbacks.emplace(CallbackID, std::make_pair(Callback, UserData));
+    return CallbackID;
+}
+
+void IEAction_Mute::UnregisterMuteChangeCallback(uint32_t CallbackID)
+{
+    m_MuteChangeCallbacks.erase(CallbackID);
+}
