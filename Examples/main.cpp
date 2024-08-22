@@ -2,23 +2,25 @@
 // Copyright © 2024 Interactive Echoes. All rights reserved.
 // Author: mozahzah
 
-#include "IEActions.h"
+#include "IEActions.hpp"
+#include <cstdint>
 #include <iostream>
+#include <memory>
 
 void OnVolumeChange(float Volume, void* UserData)
 {
-    std::cout << "You have set your master audio output volume to " << Volume << ".\n";
+    std::cout << "Master audio output volume equals " << Volume << " \n";
 }
 
 void OnMuteChange(bool bMute, void* UserData)
 {
     if (bMute)
     {
-        std::cout << "You have muted your master audio output. \n";
+        std::cout << "Muted your master audio output. \n";
     }
     else
     {
-        std::cout << "You have un-muted your master audio output. \n";
+        std::cout << "Un-muted your master audio output. \n";
     }
 }
 
@@ -27,26 +29,28 @@ int main()
     const std::unique_ptr<IEAction_Volume> VolumeAction = IEAction::GetVolumeAction();
     const std::unique_ptr<IEAction_Mute> MuteAction = IEAction::GetMuteAction();
 
-    if (VolumeAction)
+    if (VolumeAction && MuteAction)
     {
-        const uint32_t CallbackID = VolumeAction->RegisterVolumeChangeCallback(&OnVolumeChange, nullptr);
-
-        float Volume = 1.0f;
-        std::cout << "Set system volume 0 to 1: ";
+        float Volume = 0.0f;
+        std::cout << "Set system volume (0.0 to 1.0): \n";
         std::cin >> Volume;
         VolumeAction->SetVolume(Volume);
-    }
-
-    if (MuteAction)
-    {
-        const uint32_t CallbackID = MuteAction->RegisterMuteChangeCallback(&OnMuteChange, nullptr);
 
         int bMute = 0;
-        std::cout << "Set system mute 0 or 1: ";
+        std::cout << "Set system mute (0 for unmute, 1 for mute): \n";
         std::cin >> bMute;
         MuteAction->SetMute(bMute ? true : false);
-    }
 
-    std::cout << "IEActions Example finished view the github Wiki for more.";
+        std::cout << "Test callbacks by changing your system volume and mute value on your desktop or press Enter to end the demo....\n";
+        const uint32_t VolumeCallbackID = VolumeAction->RegisterVolumeChangeCallback(&OnVolumeChange, nullptr);
+        const uint32_t MuteCallbackID = MuteAction->RegisterMuteChangeCallback(&OnMuteChange, nullptr);
+        std::cin.ignore();
+        std::cin.get();
+
+        std::cout << "IEActions Example finished. View the GitHub Wiki for more." << std::endl;
+
+        VolumeAction->UnregisterVolumeChangeCallback(VolumeCallbackID);
+        MuteAction->UnregisterMuteChangeCallback(MuteCallbackID);
+    }
     return 0;
 }

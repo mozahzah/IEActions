@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "IEActions.h"
+#include "IEActions.hpp"
 
 #if defined (__APPLE__)
 #include <AudioToolbox/AudioToolbox.h>

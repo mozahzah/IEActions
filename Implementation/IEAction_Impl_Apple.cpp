@@ -2,7 +2,7 @@
 // Copyright © 2024 Interactive Echoes. All rights reserved.
 // Author: mozahzah
 
-#include "Implementation/IEAction_Impl_Apple.h"
+#include "Implementation/IEAction_Impl_Apple.hpp"
 
 #if defined (__APPLE__)
 IEAction_Volume_Impl_Apple::IEAction_Volume_Impl_Apple()

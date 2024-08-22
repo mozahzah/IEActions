@@ -2,10 +2,10 @@
 // Copyright © 2024 Interactive Echoes. All rights reserved.
 // Author: mozahzah
 
-#include "IEActions.h"
+#include "IEActions.hpp"
 
-#include "Implementation/IEAction_Impl_Win.h"
-#include "Implementation/IEAction_Impl_Apple.h"
+#include "Implementation/IEAction_Impl_Win.hpp"
+#include "Implementation/IEAction_Impl_Apple.hpp"
 
 namespace IEAction
 {
